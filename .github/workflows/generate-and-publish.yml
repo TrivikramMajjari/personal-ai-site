@@ -34,10 +34,23 @@ jobs:
             exit 1
           fi
 
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: personal-ai-site
+      - name: Deploy site to gh-pages branch (no actions)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Preparing deployment directory"
+          rm -rf out || true
+          mkdir out
+          cp -r personal-ai-site/* out/ || true
+          ls -la out
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+          echo "Initializing temporary git repo"
+          cd out
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Deploy site: $GITHUB_SHA" || echo "nothing to commit"
+
+          echo "Pushing to gh-pages branch"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" master:gh-pages || git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:gh-pages
