@@ -19,7 +19,20 @@ jobs:
         env:
           ELEVENLABS_AGENT_ID: ${{ secrets.ELEVENLABS_AGENT_ID }}
         run: |
-          node scripts/generate-personalAI.js
+          echo "Repository root contents:"
+          ls -la
+          echo "Looking for generator script..."
+          if [ -f personal-ai-site/scripts/generate-personalAI.js ]; then
+            echo "Found at personal-ai-site/scripts/generate-personalAI.js — running"
+            node personal-ai-site/scripts/generate-personalAI.js
+          elif [ -f scripts/generate-personalAI.js ]; then
+            echo "Found at scripts/generate-personalAI.js — running"
+            node scripts/generate-personalAI.js
+          else
+            echo "ERROR: generate-personalAI.js not found in expected locations"
+            echo "Searched: personal-ai-site/scripts/generate-personalAI.js and scripts/generate-personalAI.js"
+            exit 1
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
