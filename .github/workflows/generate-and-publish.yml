@@ -34,9 +34,10 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v1
         with:
-          publish_dir: personal-ai-site
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: personal-ai-site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
